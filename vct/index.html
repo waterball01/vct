@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esports Manager</title>
+    <link rel="stylesheet" href="styles.css?v=1.0">
+</head>
+<body>
+    <header>
+        <img src="valorant-logo.jpeg" alt="Valorant Logo" class="logo">
+        <h1>ESPORTS MANAGER</h1>
+        <a href="index.html" class="new-chat-btn">
+            <span class="plus-sign"> + </span>
+        </a>
+    </header>
+
+    <main class="new-chat-page">
+        <div class="new-chat-box"></div>
+        <input type="text" class="chat-input" placeholder="Type your message here...">
+        <button class="enter-btn">Enter</button>
+    </main>
+
+    <!-- JavaScript goes here -->
+    <script>
+        // Function to handle sending and receiving messages
+        async function sendMessage() {
+            const chatInput = document.querySelector('.chat-input');
+            const newChatBox = document.querySelector('.new-chat-box');
+            const userMessage = chatInput.value.trim();
+
+            if (!userMessage) return;  // Don't proceed if input is empty
+
+            // Display user message in chat box
+            const userChat = document.createElement('p');
+            userChat.textContent = `You: ${userMessage}`;
+            newChatBox.appendChild(userChat);
+
+            // Clear input box
+            chatInput.value = '';
+
+            let responseMessage;
+            try {
+                console.log("Sending message:", userMessage);  // Debugging
+                const response = await fetch('http://127.0.0.1:5000/send-to-bedrock', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: userMessage }),
+                });
+
+                // Check if the response is OK (status code 200)
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                }
+
+                // Parse the JSON response from the server
+                const data = await response.json();
+                responseMessage = data.modelResponse;  // Extract the model response
+                console.log("Received response:", responseMessage);  // Debugging
+            } catch (error) {
+                responseMessage = 'Error: Failed to fetch response from Esports Manager.';
+                console.error('Fetch error:', error);  // Log detailed error for debugging
+            }
+
+            // Display model response in chat box
+            const modelChat = document.createElement('p');
+            modelChat.textContent = `Esports Manager: ${responseMessage}`;
+            newChatBox.appendChild(modelChat);
+
+            // Scroll to bottom of chat
+            newChatBox.scrollTop = newChatBox.scrollHeight;
+        }
+    
+        // Add event listener for "Enter" key and "Enter" button
+        document.querySelector('.enter-btn').addEventListener('click', sendMessage);
+        document.querySelector('.chat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    
+        // Function to clear chat history
+        document.querySelector('.plus-sign').addEventListener('click', () => {
+            const newChatBox = document.querySelector('.new-chat-box');
+            newChatBox.innerHTML = '';  // Clear all chat content
+        });
+    </script>
+</body>
+</html>
