@@ -2,7 +2,8 @@
 
 A data analysis and visualization toolkit for the Valorant Champions Tour (VCT).
 Scrapes match statistics from vlr.gg and visualizes player kill/death positions
-from official Riot Games VCT match data.
+from official Riot Games VCT match data. Utilizes Amazon Bedrock's AI models to 
+advise coaches on possible team selection and strategies.
 
 ## Features
 
